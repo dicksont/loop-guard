@@ -6,6 +6,9 @@
     "Dickson Tam <dicksont650@gmail.com>"
   ],
   "description": "Guard against loops during tree/graph traversal",
+  "devDependencies": {
+    "mocha" : "^2.2.5"
+  },
   "main": "lpguard.js",
   "moduleType": [
     "amd",
