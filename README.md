@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/dicksont/loop-guard.svg?branch=master)](https://travis-ci.org/dicksont/loop-guard)
+[![npm version](https://badge.fury.io/js/loop-guard.svg)](http://badge.fury.io/js/loop-guard)
+
 Loop Guard guards against loops during tree/graph traversal.
 
 
