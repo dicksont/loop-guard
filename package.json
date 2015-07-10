@@ -1,6 +1,6 @@
 {
   "name": "loop-guard",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Guard against loops during tree/graph traversal",
   "main": "lpguard.js",
   "directories": {
