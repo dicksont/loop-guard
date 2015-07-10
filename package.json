@@ -1,0 +1,32 @@
+{
+  "name": "loop-guard",
+  "version": "0.0.0",
+  "description": "Guard against loops during tree/graph traversal",
+  "main": "lpguard.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha test/test_record.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dicksont/loop-guard.git"
+  },
+  "keywords": [
+    "loop",
+    "tree",
+    "graph",
+    "traversal",
+    "search",
+    "dfs",
+    "object",
+    "array"
+  ],
+  "author": "Dickson Tam <dicksont650@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dicksont/loop-guard/issues"
+  },
+  "homepage": "https://github.com/dicksont/loop-guard#readme"
+}
