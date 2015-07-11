@@ -24,82 +24,100 @@
  *
  */
 
+(function(factory) {
 
-var createGuard = require('../lpguard.js');
-var assert = require('assert');
-var testCases = [];
+  if (typeof module !== 'undefined' && module && module.exports) {
+    factory(require('assert'), require('../lpguard.js'));
+  } else if (typeof define === 'function' && define.amd) { // Require.js & AMD
 
-testCases.push({
-  topology: (function() {
-    var a = [];
-    a.label = 'a';
-    a[0] = 'loop';
+    define([ 'chai', 'loop-guard'], function(chai, guard) {
+      factory(chai.assert, guard);
+    });
 
-    return a;
-  })(),
-  count: 1,
-  label: 'recursive'
-});
+  } else {
 
-
-testCases.push({
-  topology: (function() {
-    var a = [];
-    a.label = 'a';
-
-    var b = [];
-    b.label = 'b';
-    a[0] = b;
-    b[0] = a;
-
-    return a;
-  })(),
-  count: 2,
-  label: 'ying-yang'
-});
-
-function checkVisits(log, count) {
-  var visited = 0;
-  for(var label in log) {
-    visited++;
+    factory(window.assert, window.loopGuard);
+    mocha.checkLeaks();
+    mocha.run();
   }
 
-  assert.equal(visited, count);
-}
 
-function runTest(label, topology, count) {
-  var guard = createGuard();
+})(function(assert, createGuard) {
 
-  function visitNode(arr, log) {
-    guard.visit(arr);
-    log = log || {};
-    log[arr.label] = (log[arr.label] == null)? 1 : log[arr.label]++;
+  var testCases = [];
 
-    for (var i=0; i < arr.length; i++) {
-      if (guard.canVisit(arr[i])) {
-        return visitNode(arr[i], log);
+  testCases.push({
+    topology: (function() {
+      var a = [];
+      a.label = 'a';
+      a[0] = a;
+
+      return a;
+    })(),
+    count: 1,
+    label: 'recursive'
+  });
+
+
+  testCases.push({
+    topology: (function() {
+      var a = [];
+      a.label = 'a';
+
+      var b = [];
+      b.label = 'b';
+      a[0] = b;
+      b[0] = a;
+
+      return a;
+    })(),
+    count: 2,
+    label: 'yin-yang'
+  });
+
+  function checkVisits(log, count) {
+    var visited = 0;
+    for(var label in log) {
+      visited++;
+    }
+    assert.equal(visited, count);
+  }
+
+  function runTest(label, topology, count) {
+    var guard = createGuard();
+
+    function visitNode(arr, log) {
+      guard.visit(arr);
+      log = log || {};
+      log[arr.label] = 1 + ((log[arr.label] == null)? 0 : log[arr.label]);
+
+      for (var i=0; i < arr.length; i++) {
+        if (!guard.isVisiting(arr[i])) {
+          return visitNode(arr[i], log);
+        }
       }
+
+      guard.leave(arr);
+      return log;
     }
 
-    guard.leave(arr);
-    return log;
+    it(label, function() {
+      var log = visitNode(topology);
+      checkVisits(log, count);
+    });
   }
 
-  it(label, function() {
-    var log = visitNode(topology);
-    checkVisits(log, count);
+
+
+  describe('Guard', function() {
+    describe('should visit every node and return', function() {
+
+      for (var i=0; i < testCases.length; i++) {
+        var tc = testCases[i];
+        runTest(tc.label, tc.topology, tc.count);
+      }
+
+    });
   });
-}
 
-
-
-describe('Guard', function() {
-  describe('should visit every node and return', function() {
-
-    for (var i=0; i < testCases.length; i++) {
-      var tc = testCases[i];
-      runTest(tc.label, tc.topology, tc.count);
-    }
-
-  });
-});
+})
