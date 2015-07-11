@@ -28,7 +28,8 @@
 (function() {
 
   function Guard() {
-    this.stack = [];
+    this.visiting = [];
+    this.visited = [];
     this.sleeping = false;
   }
 
@@ -38,7 +39,7 @@
     if (typeof(obj) != 'object' || obj == null)
       return;
 
-    this.stack.push(obj);
+    this.visiting.push(obj);
   }
 
   Guard.prototype.leave = function(obj) {
@@ -47,14 +48,23 @@
     if (obj == null)
       throw new Error('loop-guard: Tried to leave an unspecified object [' + obj + ']');
 
-    if (this.stack[this.stack.length - 1] != obj)
+    if (this.visiting[this.visiting.length - 1] != obj)
       throw new Error('loop-guard: Forgot to leave object [' + obj + ']');
 
-    this.stack.pop();
+    this.visiting.pop();
+    this.visited.push(obj);
   }
 
   Guard.prototype.isVisiting = function(obj) {
-    return !this.sleeping && ~this.stack.indexOf(obj);
+    return !this.sleeping && ~this.visiting.indexOf(obj);
+  }
+
+  Guard.prototype.hasVisited = function(obj) {
+    return this.isVisiting(obj) || this.hadVisited(obj);
+  }
+
+  Guard.prototype.hadVisited = function(obj) {
+    return !this.sleeping && ~this.visited.indexOf(obj);
   }
 
   Guard.prototype.sleep = function() {
@@ -65,19 +75,19 @@
     this.sleeping = false;
   }
 
-  function createGuard() {
+  Guard.createGuard = function() {
     return new Guard();
   }
 
 
   if (typeof module !== 'undefined' && module && module.exports) { // Node.js & CommonJS
-    module.exports = createGuard;
+    module.exports = Guard;
   } else if (typeof define === 'function' && define.amd) {
     define('loop-guard', [], function() {
-      return createGuard;
+      return Guard;
     });
   } else { // Browser
-    window.loopGuard = createGuard;
+    window.LoopGuard = Guard;
   }
 
 

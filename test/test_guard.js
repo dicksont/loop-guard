@@ -30,20 +30,20 @@
     factory(require('assert'), require('../lpguard.js'));
   } else if (typeof define === 'function' && define.amd) { // Require.js & AMD
 
-    define([ 'chai', 'loop-guard'], function(chai, guard) {
-      factory(chai.assert, guard);
+    define([ 'chai', 'loop-guard'], function(chai, Guard) {
+      factory(chai.assert, Guard);
     });
 
   } else {
 
-    factory(window.assert, window.loopGuard);
+    factory(window.assert, window.LoopGuard);
     mocha.checkLeaks();
     mocha.run();
   }
 
 
-})(function(assert, createGuard) {
-
+})(function(assert, Guard) {
+  var createGuard = Guard.createGuard;
   var testCases = [];
 
   testCases.push({
@@ -83,7 +83,7 @@
     assert.equal(visited, count);
   }
 
-  function runTest(label, topology, count) {
+  function runTest(label, topology, count, checkFx) {
     var guard = createGuard();
 
     function visitNode(arr, log) {
@@ -92,7 +92,7 @@
       log[arr.label] = 1 + ((log[arr.label] == null)? 0 : log[arr.label]);
 
       for (var i=0; i < arr.length; i++) {
-        if (!guard.isVisiting(arr[i])) {
+        if (!checkFx.call(guard, arr[i])) {
           return visitNode(arr[i], log);
         }
       }
@@ -110,14 +110,23 @@
 
 
   describe('Guard', function() {
-    describe('should visit every node and return', function() {
+    describe('.isVisiting', function() {
+      describe('should visit every node and return', function() {
+        for (var i=0; i < testCases.length; i++) {
+          var tc = testCases[i];
+          runTest(tc.label, tc.topology, tc.count, Guard.prototype.isVisiting);
+        }
+      });
+    })
+    describe('.hasVisited', function() {
+      describe('should visit every node and return', function() {
+        for (var i=0; i < testCases.length; i++) {
+          var tc = testCases[i];
+          runTest(tc.label, tc.topology, tc.count, Guard.prototype.hasVisited);
+        }
+      });
+    })
 
-      for (var i=0; i < testCases.length; i++) {
-        var tc = testCases[i];
-        runTest(tc.label, tc.topology, tc.count);
-      }
-
-    });
   });
 
 })
