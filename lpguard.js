@@ -53,16 +53,8 @@
     this.stack.pop();
   }
 
-  Guard.prototype.canVisit = function(obj) {
-    if (this.sleeping)
-      return true;
-
-    for (var i=0; i < this.stack.length; i++) {
-      if (this.stack[i] == obj)
-        return false;
-    }
-
-    return true;
+  Guard.prototype.isVisiting = function(obj) {
+    return !this.sleeping && ~this.stack.indexOf(obj);
   }
 
   Guard.prototype.sleep = function() {

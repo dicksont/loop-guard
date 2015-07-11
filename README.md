@@ -18,7 +18,7 @@ function visitNode(node) {
   for (var i=0; i < node.children.length; i++) {
     var child = node.children[i];
 
-    if (guard.canVisit(child)) {
+    if (!guard.isVisiting(child)) {
       visitNode(child);
     }
   }
