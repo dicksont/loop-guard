@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>Test Runner for Array-Etc</title>
+  <link rel="stylesheet" href="/node_modules/mocha/mocha.css"/>
+  <style>
+
+  body {
+    font-family: 'Arial', sans-serif;
+  }
+
+  label {
+    font-size: 12px;
+    color: #666;
+    margin-right: 6px;
+  }
+
+  #div_modenv {
+    margin: 9px;
+  }
+
+  </style>
+</head>
+
+<body>
+  <div id="mocha"></div>
+
+
+  <script src="/node_modules/chai/chai.js"></script>
+  <script src="/node_modules/mocha/mocha.js"></script>
+  <script>
+    window.assert = chai.assert;
+    mocha.setup('bdd');
+  </script>
+  <script src="../lpguard.js"></script>
+  <script src="./test_guard.js"></script>
+</body>
+
+</html>
